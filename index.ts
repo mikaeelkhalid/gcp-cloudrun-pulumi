@@ -13,3 +13,15 @@ const helloService = new gcp.cloudrun.Service('hello', {
     },
   },
 });
+
+// allow public unrestricted access
+const iamHello = new gcp.cloudrun.IamMember('hello-everyone', {
+  service: helloService.name,
+  location,
+  role: 'roles/run.invoker',
+  member: 'allUsers',
+});
+
+// export the app URL
+export const helloUrl = helloService.statuses[0].url;
+
