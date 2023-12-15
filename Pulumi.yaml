@@ -1,3 +1,9 @@
 name: gcp-cloudrun-pulumi
 runtime: nodejs
 description: An example of deploying a custom Docker image into Google Cloud Run service using TypeScript
+template:
+  config:
+    gcp:project:
+      description: The Google Cloud project to deploy into
+    gcp:region:
+      description: The Google Cloud region
