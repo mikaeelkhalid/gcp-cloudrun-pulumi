@@ -26,6 +26,8 @@ const iamHello = new gcp.cloudrun.IamMember('hello-everyone', {
 // export the app URL
 export const helloUrl = helloService.statuses[0].url;
 
+/* ------------------------------------------------------------------- */
+
 /* deploy a custom container to Cloud Run */
 
 // build a Docker image from our sample Ruby app and put it to Google Container Registry.
