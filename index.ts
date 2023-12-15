@@ -1,10 +1,11 @@
 import * as pulumi from '@pulumi/pulumi';
 import * as gcp from '@pulumi/gcp';
+import * as docker from '@pulumi/docker';
 
 // location to deploy cloud run service
 const location = gcp.config.region || 'us-central1';
 
-// deploy a pre-existing Hello Cloud Run container
+/* deploy a pre-existing Hello Cloud Run container */
 const helloService = new gcp.cloudrun.Service('hello', {
   location,
   template: {
@@ -24,4 +25,16 @@ const iamHello = new gcp.cloudrun.IamMember('hello-everyone', {
 
 // export the app URL
 export const helloUrl = helloService.statuses[0].url;
+
+/* deploy a custom container to Cloud Run */
+
+// build a Docker image from our sample Ruby app and put it to Google Container Registry.
+// note: run `gcloud auth configure-docker` in your command line to configure auth to GCR.
+const imageName = 'ruby-app';
+const rubyImage = new docker.Image(imageName, {
+  imageName: pulumi.interpolate`gcr.io/${gcp.config.project}/${imageName}:v1.0.0`,
+  build: {
+    context: './ruby-app',
+  },
+});
 
