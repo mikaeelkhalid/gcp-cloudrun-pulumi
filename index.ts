@@ -38,3 +38,34 @@ const rubyImage = new docker.Image(imageName, {
   },
 });
 
+// deploy to Cloud Run, and some parameters like concurrency and memory.
+const rubyService = new gcp.cloudrun.Service('ruby', {
+  location,
+  template: {
+    spec: {
+      containers: [
+        {
+          image: rubyImage.imageName,
+          resources: {
+            limits: {
+              memory: '1Gi',
+            },
+          },
+        },
+      ],
+      containerConcurrency: 50,
+    },
+  },
+});
+
+// allow public unrestricted access
+const iamRuby = new gcp.cloudrun.IamMember('ruby-everyone', {
+  service: rubyService.name,
+  location,
+  role: 'roles/run.invoker',
+  member: 'allUsers',
+});
+
+// export the app URL
+export const rubyUrl = rubyService.statuses[0].url;
+
